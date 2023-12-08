@@ -2,7 +2,19 @@ import numpy as np
 from scipy import optimize
 
 
-def external_penalty(
+def external_penalty(current_point, ineq_constraints, eq_constraints, u, fx):
+    ineq = [
+        u * (max(0, g(current_point)) ** 2)
+        for g in ineq_constraints
+    ]
+    eq = [
+        u * (h(current_point) ** 2)
+        for h in eq_constraints
+    ]
+    f = fx(current_point)
+    return f + sum(ineq) + sum(eq)
+
+def solve(
         fx: callable,
         ineq_constraints: list[callable],
         eq_constraints: list[callable],
@@ -17,21 +29,13 @@ def external_penalty(
     xlast = np.inf * np.ones(len(initial_point))  # Último valor de u
     iteracoes = 1  # Contador de iterações
 
-    def new_problem(current_point):
-        ineq = [
-            u*(max(0, g(current_point))**2)
-            for g in ineq_constraints
-        ]
-        eq = [
-            u*(h(current_point)**2)
-            for h in eq_constraints
-        ]
-        f = fx(current_point)
-        return f + sum(ineq) + sum(eq)
-
     while iteracoes < max_iterations:
         # Determina o ponto de ótimo através de um método de otimização irrestrita
-        solution = optimize.minimize(new_problem, initial_point, method=method)
+        solution = optimize.minimize(
+            external_penalty,
+            initial_point,
+            args=(ineq_constraints, eq_constraints, u, fx),
+            method=method)
         xopt = solution.x
         fopt = solution.fun
 
@@ -66,7 +70,7 @@ def base_test():
         x1, x2 = x[0], x[1]
         return x1 + x2 - 5
 
-    external_penalty(
+    solve(
         fx=fx,
         ineq_constraints=[gx],
         eq_constraints=[hx],
@@ -114,7 +118,7 @@ def q1_minimizao_material_caixa():
     def g8(x):
         return -x[2]
 
-    external_penalty(
+    solve(
         fx=fx,
         eq_constraints=[volume],
         ineq_constraints=[
@@ -130,6 +134,11 @@ def q1_minimizao_material_caixa():
         max_iterations=100,
         precisao=1e-3
     )
+
+
+def q2():
+    pass
+
 
 if __name__ == "__main__":
     import warnings

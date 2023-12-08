@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import optimize
 
+
 def external_penalty(
         fx: callable,
         ineq_constraints: list[callable],
@@ -72,7 +73,8 @@ def base_test():
         initial_point=np.array([0, 0])
     )
 
-def q1_minimazao_material_caixa():
+
+def q1_minimizao_material_caixa():
     """
     Problema de otimização restrita que busca minimizar o consumo de material para construção de uma caixa. Esse consumo
     é definido pela área superficial da caixa.
@@ -112,7 +114,6 @@ def q1_minimazao_material_caixa():
     def g8(x):
         return -x[2]
 
-
     external_penalty(
         fx=fx,
         eq_constraints=[volume],
@@ -130,7 +131,7 @@ def q1_minimazao_material_caixa():
         precisao=1e-3
     )
 
-if __name__=="__main__":
+if __name__ == "__main__":
     import warnings
     warnings.filterwarnings('ignore')
-    q1_minimazao_material_caixa()
+    q1_minimizao_material_caixa()

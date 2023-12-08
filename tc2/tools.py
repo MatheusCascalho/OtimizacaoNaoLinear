@@ -14,6 +14,7 @@ def external_penalty(current_point, ineq_constraints, eq_constraints, u, fx):
     f = fx(current_point)
     return f + sum(ineq) + sum(eq)
 
+
 def solve(
         fx: callable,
         ineq_constraints: list[callable],

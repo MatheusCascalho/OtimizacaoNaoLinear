@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import optimize
+import matplotlib.pyplot as plt
 
 
 def external_penalty(current_point, ineq_constraints, eq_constraints, u, fx):
@@ -293,6 +294,44 @@ def q3_rosenbrock():
         penalty=internal_penalty,
         alpha=0.5
     )
+
+def plot_rosenbrock_restrito():
+    def g1(vars):
+        a, b = vars
+        return (a - 1) ** 3 + 1
+
+    def g2(x):
+        a, b = x
+        return -a + 2
+
+    # Definição da malha de pontos
+    x1, x2 = np.meshgrid(np.linspace(-1.5, 1.5),
+                         np.linspace(-2.5, 2.5))
+    x = [x1, x2]
+    # Calcula f(x) e exibe gráfico de contorno
+    f = fx(x)
+    plt.contour(x1, x2, f)
+
+    # Calcula g e exibe restrição
+    for g in [g1, g2]:
+        a, b = (np.linspace(-1.5, 1.5), np.linspace(0.5, 2.5))
+        gd = g([a, b])
+        plt.plot(a, gd, label=str(g.__name__))
+
+    # # Calcula h e exibe restrição
+    # x1 = np.linspace(0, 6)
+    # h1 = 5-x1
+    # plt.plot(x1, h1, 'b', label=r'$h_1(\mathbf{x})$')
+
+    # # Outros parâmetros da figura
+    plt.xlim([-1.5, 1.5])
+    plt.ylim([-0.5, 2.5])
+    plt.xlabel(r'$x_1$')
+    plt.ylabel(r'$x_2$')
+    plt.title('Problema de Rosenbrock com restrições')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 
 if __name__ == "__main__":
